@@ -1,0 +1,73 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.modal {
+  width: 90%;
+  max-width: 480px;
+  background-color: var(--bg-rail);
+  border: 1px solid var(--border-medium);
+  border-radius: 12px;
+  box-shadow: var(--shadow-modal);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: modalFadeIn 180ms var(--ease-spring);
+}
+
+.header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--bg-sidebar);
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.closeBtn {
+  color: var(--text-tertiary);
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.closeBtn:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-hover);
+}
+
+.body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.providerList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.errorBanner {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background-color: rgba(255, 69, 58, 0.15);
+  border: 1px solid rgba(255, 69, 58, 0.3);
+  color: var(--accent-red);
+  font-size: 12px;
+}

@@ -1,0 +1,66 @@
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-viewer);
+  height: 100%;
+  overflow: hidden;
+}
+
+.topBar {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.inputBar {
+  display: flex;
+  gap: 10px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.input {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: all var(--duration-fast) var(--ease-spring);
+}
+
+.input:focus {
+  border-color: var(--border-focus);
+  background-color: var(--bg-elevated);
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 800px;
+}
+
+.sectionHeader {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 10px;
+}

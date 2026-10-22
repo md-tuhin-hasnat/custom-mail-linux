@@ -1,0 +1,220 @@
+.card {
+  display: flex;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 3px 6px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  transition: all var(--duration-fast) var(--ease-spring);
+  cursor: pointer;
+  user-select: none;
+  content-visibility: auto;
+  contain-intrinsic-size: 80px;
+}
+
+.card:hover {
+  background-color: var(--bg-hover);
+}
+
+.selected {
+  background-color: var(--accent-blue-subtle) !important;
+  border-color: rgba(10, 132, 255, 0.3);
+}
+
+.indicatorArea {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 16px;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.checkbox {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  border: 1px solid var(--border-strong);
+  background-color: rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #ffffff;
+  padding: 0;
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-spring), border-color var(--duration-fast) var(--ease-spring), background-color var(--duration-fast) var(--ease-spring);
+}
+
+.card:hover .checkbox,
+.checkboxChecked {
+  opacity: 1;
+}
+
+.checkboxChecked {
+  background-color: var(--accent-blue) !important;
+  border-color: var(--accent-blue) !important;
+}
+
+.unreadDot {
+  position: absolute;
+  top: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-blue);
+  pointer-events: none;
+  transition: opacity var(--duration-fast) var(--ease-spring);
+}
+
+.card:hover .unreadDot {
+  opacity: 0 !important;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.senderName {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unreadSender {
+  font-weight: 700;
+}
+
+.date {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.subjectRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.subject {
+  font-size: 12px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.unreadSubject {
+  font-weight: 600;
+}
+
+.snippet {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+
+.footerRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.starButton {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  transition: color var(--duration-fast) var(--ease-spring);
+}
+
+.starButton:hover {
+  color: var(--accent-orange);
+}
+
+.starActive {
+  color: var(--accent-orange) !important;
+}
+
+.lockButton {
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  padding: 1px 4px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-spring);
+  font-size: 10px;
+}
+
+.lockButton:hover {
+  color: #ff9f0a;
+  background-color: rgba(255, 159, 10, 0.12);
+}
+
+.lockActive {
+  color: #ff9f0a !important;
+  background-color: rgba(255, 159, 10, 0.14);
+}
+
+.lockedLabel {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.attachmentChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 7px;
+  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+  font-size: 10.5px;
+  font-weight: 500;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: all var(--duration-fast);
+}
+
+.card:hover .attachmentChip {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.countPill {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background-color: rgba(255, 255, 255, 0.08);
+  padding: 0 5px;
+  border-radius: 9999px;
+}

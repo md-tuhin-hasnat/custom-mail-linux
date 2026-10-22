@@ -1,0 +1,42 @@
+.container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-viewer);
+  height: 100%;
+  overflow: hidden;
+}
+
+.topBar {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 800px;
+}
+
+.dateHeader {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 8px;
+}

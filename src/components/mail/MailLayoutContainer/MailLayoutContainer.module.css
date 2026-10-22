@@ -1,0 +1,61 @@
+/**
+ * MailLayoutContainer.module.css
+ * Layout styling for Mail view configurations (Three-Column, Bottom-Reader split, Separate-Page).
+ */
+
+.mailContainerThree {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mailContainerBottom {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.bottomSplitArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.bottomSplitTop {
+  height: 44%;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+}
+
+.bottomSplitBottom {
+  flex: 1;
+  height: 56%;
+  overflow: hidden;
+  display: flex;
+}
+
+.mailContainerSeparate {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.separateListArea {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.separateReaderArea {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}

@@ -1,0 +1,129 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: rgba(6, 8, 12, 0.92);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 200ms cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.sideNavBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(18, 20, 26, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 40;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transition: all 150ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sideNavBtn:hover:not(:disabled) {
+  background: rgba(30, 34, 44, 0.95);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 16px rgba(59, 130, 246, 0.25);
+}
+
+.sideNavBtn:disabled {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sideNavLeft {
+  left: 20px;
+}
+
+.sideNavRight {
+  right: 20px;
+}
+
+.bottomDock {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 18, 24, 0.82);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 6px 10px;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  z-index: 50;
+  max-width: 90vw;
+  overflow-x: auto;
+}
+
+.dockItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #94a3b8;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 140ms ease;
+  white-space: nowrap;
+}
+
+.dockItem:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.dockItemActive {
+  background: rgba(37, 99, 235, 0.22);
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 0 16px rgba(59, 130, 246, 0.35);
+}
+
+.dockName {
+  font-weight: 500;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dockSize {
+  font-size: 10.5px;
+  color: #64748b;
+}
+
+.dockItemActive .dockSize {
+  color: #93c5fd;
+}

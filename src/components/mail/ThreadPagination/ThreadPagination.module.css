@@ -1,0 +1,120 @@
+.paginationContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: linear-gradient(180deg, rgba(24, 26, 32, 0.8) 0%, rgba(16, 18, 22, 0.95) 100%);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  user-select: none;
+  gap: 10px;
+}
+
+.infoSection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.rangeBadge {
+  font-weight: 600;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.totalNumber {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.rightControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sizeSegment {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 1px;
+}
+
+.sizeBtn {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-spring);
+}
+
+.sizeBtn:hover {
+  color: var(--text-primary);
+}
+
+.sizeBtnActive {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.navControls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-spring);
+  padding: 0;
+}
+
+.navButton:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.navButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  border-color: transparent;
+}
+
+.pageBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 11px;
+  white-space: nowrap;
+}

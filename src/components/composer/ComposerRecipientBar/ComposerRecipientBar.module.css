@@ -1,0 +1,191 @@
+/**
+ * ComposerRecipientBar CSS Module
+ * Enterprise inputs for To, Cc, Bcc, Subject, and Attachments.
+ */
+
+.bar {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface, #1e1e24);
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  padding: 8px 20px;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 36px;
+}
+
+.label {
+  width: 60px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary, #9aa0a6);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.inputWrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.input {
+  flex: 1;
+  min-width: 200px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary, #f5f5f7);
+  font-size: 13px;
+  font-family: inherit;
+  padding: 4px 0;
+}
+
+.input::placeholder {
+  color: var(--text-muted, #5f6368);
+}
+
+.subjectInput {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.toggleBtn {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #9aa0a6);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.toggleBtn:hover {
+  color: var(--text-primary, #f5f5f7);
+  background: var(--bg-surface-hover, rgba(255, 255, 255, 0.06));
+}
+
+.actionPills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
+.attachBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+  color: var(--text-secondary, #9aa0a6);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.attachBtn:hover {
+  background: var(--bg-surface-hover, rgba(255, 255, 255, 0.08));
+  color: var(--text-primary, #f5f5f7);
+}
+
+.attachmentList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0 6px 72px;
+}
+
+.attachmentChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: var(--bg-surface-elevated, #2b2f38);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.12));
+  border-radius: 4px;
+  font-size: 11px;
+  color: var(--text-primary, #f5f5f7);
+}
+
+.attachmentSize {
+  color: var(--text-muted, #80868b);
+  font-size: 10px;
+}
+
+.removeAttachment {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary, #9aa0a6);
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 2px;
+}
+
+.removeAttachment:hover {
+  color: #ef4444;
+}
+
+.templateDropdown {
+  position: relative;
+}
+
+.templateMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  background: var(--bg-surface-elevated, #2a2e37);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  padding: 6px;
+  min-width: 220px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.templateItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.templateItem:hover {
+  background: var(--bg-surface-hover, rgba(255, 255, 255, 0.08));
+}
+
+.templateName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary, #f5f5f7);
+}
+
+.templateDesc {
+  font-size: 11px;
+  color: var(--text-secondary, #9aa0a6);
+}

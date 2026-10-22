@@ -1,0 +1,63 @@
+.button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--duration-fast) var(--ease-spring);
+  cursor: pointer;
+  text-align: left;
+}
+
+.button:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-medium);
+  transform: translateY(-1px);
+}
+
+.iconWrapper {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.googleIcon {
+  background-color: #ffffff;
+  color: #ea4335;
+}
+
+.microsoftIcon {
+  background-color: #0078d4;
+  color: #ffffff;
+}
+
+.imapIcon {
+  background-color: #bf5af2;
+  color: #ffffff;
+}
+
+.textGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.subtitle {
+  font-size: 11px;
+  color: var(--text-tertiary);
+}

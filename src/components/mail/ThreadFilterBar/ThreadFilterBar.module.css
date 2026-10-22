@@ -1,0 +1,104 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  background: linear-gradient(180deg, rgba(26, 28, 34, 0.75) 0%, rgba(18, 20, 24, 0.85) 100%);
+  backdrop-filter: blur(16px);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.categorySegment {
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.tab {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--duration-fast) var(--ease-spring);
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.tabActive {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.filterPills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-spring);
+  user-select: none;
+}
+
+.pill:hover {
+  color: var(--text-primary);
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.pillActive {
+  color: #3b9eff !important;
+  background-color: rgba(10, 132, 255, 0.15) !important;
+  border-color: rgba(10, 132, 255, 0.4) !important;
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(10, 132, 255, 0.18);
+}
+
+.unreadDot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--accent-blue);
+  flex-shrink: 0;
+}

@@ -1,0 +1,132 @@
+.container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: auto;
+  padding: 86px 24px 96px;
+  background: radial-gradient(circle at 50% 30%, #171920 0%, #0a0b0e 100%);
+  width: 100%;
+  height: 100%;
+}
+
+.pdfFrame {
+  width: 100%;
+  max-width: 1400px;
+  height: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 24px 60px -10px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+.imageWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  max-height: 100%;
+  transition: transform 120ms ease-out;
+}
+
+.image {
+  max-width: 88vw;
+  max-height: 72vh;
+  object-fit: contain;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+}
+
+.videoPlayer {
+  max-width: 85vw;
+  max-height: 72vh;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+  background: #000000;
+}
+
+.audioWrapper {
+  padding: 40px 48px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.textViewer {
+  width: 100%;
+  max-width: 950px;
+  height: 74vh;
+  background: #121418;
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 28px 32px;
+  overflow: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13.5px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+}
+
+.emptyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 44px 52px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  text-align: center;
+  max-width: 480px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.emptyTitle {
+  font-size: 17px;
+  font-weight: 600;
+  color: #f8fafc;
+  letter-spacing: -0.01em;
+}
+
+.emptyDesc {
+  font-size: 13.5px;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.loadingWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: #94a3b8;
+  font-size: 13.5px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(59, 130, 246, 0.2);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

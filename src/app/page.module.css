@@ -1,0 +1,75 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--bg-app);
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: calc(100vh - var(--header-height) - 32px);
+}
+
+/* Three Section Layout (Standard 3-pane) */
+.mailContainerThree {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Two Section Layout (Horizontal bottom reader split) */
+.mailContainerBottom {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.bottomSplitArea {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.bottomSplitTop {
+  height: 44%;
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+}
+
+.bottomSplitBottom {
+  flex: 1;
+  height: 56%;
+  overflow: hidden;
+  display: flex;
+}
+
+/* Separate Pages Layout (Full width List and Full width Reader) */
+.mailContainerSeparate {
+  display: flex;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+}
+
+.separateListArea {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+}
+
+.separateReaderArea {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+}

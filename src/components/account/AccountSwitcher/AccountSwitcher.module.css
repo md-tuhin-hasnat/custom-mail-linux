@@ -1,0 +1,125 @@
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: all var(--duration-fast) var(--ease-spring);
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.trigger:hover {
+  background-color: var(--bg-hover);
+  border-color: var(--border-subtle);
+}
+
+.accountName {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  color: var(--text-tertiary);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: 260px;
+  background-color: var(--bg-rail);
+  border: 1px solid var(--border-medium);
+  border-radius: 10px;
+  box-shadow: var(--shadow-elevated);
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 1000;
+  animation: dropdownSlideDown 150ms var(--ease-spring);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-spring);
+}
+
+.item:hover {
+  background-color: var(--bg-hover);
+}
+
+.itemLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.itemText {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.itemName {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.itemEmail {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.check {
+  color: var(--accent-blue);
+  flex-shrink: 0;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--border-subtle);
+  margin: 4px 0;
+}
+
+.addButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  color: var(--accent-blue);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color var(--duration-fast) var(--ease-spring);
+}
+
+.addButton:hover {
+  background-color: var(--accent-blue-subtle);
+}

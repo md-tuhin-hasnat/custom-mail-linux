@@ -1,0 +1,52 @@
+.container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 480px;
+}
+
+.icon {
+  position: absolute;
+  left: 10px;
+  color: var(--text-tertiary);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  height: 28px;
+  padding: 0 10px 0 32px;
+  background-color: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--text-primary);
+  transition: all var(--duration-fast) var(--ease-spring);
+}
+
+.input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.input:focus {
+  background-color: var(--bg-elevated);
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.25);
+}
+
+.clearButton {
+  position: absolute;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  color: var(--text-tertiary);
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.clearButton:hover {
+  color: var(--text-primary);
+}

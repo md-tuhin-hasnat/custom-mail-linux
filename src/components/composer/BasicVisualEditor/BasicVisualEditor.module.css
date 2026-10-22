@@ -1,0 +1,180 @@
+/**
+ * BasicVisualEditor CSS Module
+ * Rich WYSIWYG toolbar and contentEditable surface.
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-surface, #1e1e24);
+  overflow: hidden;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 16px;
+  background: var(--bg-surface-elevated, #242831);
+  border-bottom: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.08));
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.divider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-subtle, rgba(255, 255, 255, 0.12));
+  margin: 0 4px;
+}
+
+.toolBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm, 5px);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-secondary, #9aa0a6);
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.toolBtn:hover {
+  background: var(--bg-surface-hover, rgba(255, 255, 255, 0.08));
+  color: var(--text-primary, #f5f5f7);
+  border-color: var(--border-subtle, rgba(255, 255, 255, 0.1));
+}
+
+.toolBtn.active {
+  background: rgba(0, 120, 212, 0.2);
+  color: #38bdf8;
+  border-color: rgba(56, 189, 248, 0.4);
+}
+
+.select {
+  background: var(--bg-surface, #1e1e24);
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  border-radius: 4px;
+  color: var(--text-primary, #f5f5f7);
+  font-size: 12px;
+  padding: 4px 8px;
+  outline: none;
+  cursor: pointer;
+  height: 30px;
+}
+
+.colorInputWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.colorPicker {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  left: 0;
+  top: 0;
+}
+
+.canvasWrapper {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 24px 32px;
+  background: var(--bg-canvas, #18191f);
+}
+
+.editor {
+  min-height: 100%;
+  outline: none;
+  color: var(--text-primary, #f0f0f2);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.editor:empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted, #5f6368);
+  cursor: text;
+}
+
+.editor h1 {
+  font-size: 24px;
+  margin: 16px 0 8px;
+  color: #ffffff;
+}
+
+.editor h2 {
+  font-size: 20px;
+  margin: 14px 0 6px;
+  color: #ffffff;
+}
+
+.editor h3 {
+  font-size: 16px;
+  margin: 12px 0 4px;
+  color: #ffffff;
+}
+
+.editor blockquote {
+  border-left: 3px solid var(--brand-primary, #0078d4);
+  margin: 12px 0;
+  padding: 4px 14px;
+  color: #a0aec0;
+  background: rgba(0, 120, 212, 0.05);
+}
+
+.editor pre {
+  background: #282c34;
+  padding: 12px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 13px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.editor table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 16px 0;
+}
+
+.editor table, .editor th, .editor td {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 12px;
+}
+
+.editor th {
+  background: rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+}
+
+.editor a {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
+.editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}

@@ -1,0 +1,102 @@
+/**
+ * StatusBar.module.css
+ * Styling for the bottom application status bar.
+ * Elevated font readability, clear contrast, and sleek connection badges.
+ */
+
+.bar {
+  height: 32px;
+  background-color: var(--bg-rail);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent-green);
+  box-shadow: 0 0 8px rgba(48, 209, 88, 0.45);
+  transition: background-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.syncingDot {
+  background-color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(10, 132, 255, 0.45);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 13px;
+}
+
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progressBarBg {
+  width: 100px;
+  height: 6px;
+  background-color: var(--bg-hover);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.progressBarFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-blue), #60a5fa);
+  transition: width 0.25s ease-out;
+  border-radius: 3px;
+}
+
+.syncText {
+  color: #c0c4cc;
+  font-size: 12.5px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.itemCount {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+  display: inline-flex;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(1.2); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
