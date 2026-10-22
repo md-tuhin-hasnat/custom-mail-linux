@@ -132,7 +132,10 @@ export async function sendEmailMessage({
 
   // Real Google Workspace / Gmail API transmission
   if (currentAccount?.type === 'google' && currentAccount.oauth?.refreshToken) {
-    const token = await refreshGoogleToken(currentAccount, (acc) => storage.saveAccount(acc));
+    const token = await refreshGoogleToken(currentAccount, (acc) => {
+      const all = storage.getAccounts();
+      storage.saveAccounts(all.map((a) => (a.id === acc.id ? acc : a)));
+    });
 
     if (!token) {
       return { success: false, error: 'Google authentication expired. Please reconnect your account.' };

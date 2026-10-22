@@ -57,12 +57,21 @@ export const MailComposerView = React.memo(function MailComposerView({
 
   const handleAddAttachment = useCallback((files: FileList | null) => {
     if (!files || files.length === 0) return;
-    const newItems: ComposerAttachment[] = Array.from(files).map((f) => ({
-      id: `att-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-      name: f.name,
-      size: f.size,
-    }));
-    setAttachments((prev) => [...prev, ...newItems]);
+    Array.from(files).forEach((f) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = (reader.result as string).split(',')[1] || '';
+        const newAtt: ComposerAttachment = {
+          id: `att-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+          name: f.name,
+          size: f.size,
+          mimeType: f.type || 'application/octet-stream',
+          contentBase64: base64,
+        };
+        setAttachments((prev) => [...prev, newAtt]);
+      };
+      reader.readAsDataURL(f);
+    });
   }, []);
 
   const handleRemoveAttachment = useCallback((id: string) => {
@@ -87,6 +96,8 @@ export const MailComposerView = React.memo(function MailComposerView({
         attachments,
       });
       onBack();
+    } catch (err) {
+      console.error('Failed to send mail:', err);
     } finally {
       setIsSending(false);
     }

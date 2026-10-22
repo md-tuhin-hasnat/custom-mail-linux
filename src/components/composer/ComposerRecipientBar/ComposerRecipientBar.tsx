@@ -13,6 +13,8 @@ export interface ComposerAttachment {
   id: string;
   name: string;
   size: number;
+  contentBase64?: string;
+  mimeType?: string;
 }
 
 export interface ComposerRecipientBarProps {

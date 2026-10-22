@@ -163,41 +163,67 @@ export default function App() {
     async (draft: ComposeDraftPayload) => {
       const to = draft.to;
       const snippet = draft.bodyHtml.replace(/<[^>]+>/g, '').slice(0, 100);
-      const newMsg: MailMessage = {
-        id: `msg-${Date.now()}`,
-        threadId: `th-${Date.now()}`,
-        senderName: activeAccount?.name || 'Me',
-        senderEmail: activeAccount?.email || 'me@corp.com',
-        recipientNames: [to],
-        recipientEmails: [to],
-        subject: draft.subject || '(No Subject)',
-        snippet,
-        bodyHtml: draft.bodyHtml,
-        date: 'Just now',
-        isRead: true,
-        isStarred: false,
-        hasAttachments: (draft.attachments?.length ?? 0) > 0,
-        folderId: 'sent',
-        category: 'focused',
-      };
 
-      const newThread: MailThread = {
-        id: newMsg.threadId,
-        folderId: 'sent',
-        subject: newMsg.subject,
-        snippet: newMsg.snippet,
-        participants: [{ name: newMsg.senderName, email: newMsg.senderEmail }],
-        lastDate: 'Just now',
-        messageCount: 1,
-        isRead: true,
-        isStarred: false,
-        hasAttachments: newMsg.hasAttachments,
-        category: 'focused',
-        messages: [newMsg],
-      };
+      const res = await window.desktopAPI?.mail.sendMail(
+        {
+          recipientEmails: [to],
+          recipientNames: [to],
+          subject: draft.subject || '(No Subject)',
+          snippet,
+          bodyHtml: draft.bodyHtml,
+          cc: draft.cc,
+          bcc: draft.bcc,
+          attachments: draft.attachments,
+        } as any,
+        activeAccountId
+      );
 
-      setThreads((prev) => [newThread, ...prev]);
-      await window.desktopAPI?.mail.sendMail(newMsg, activeAccountId);
+      if (res && !res.success) {
+        alert(`Failed to send email: ${res.error || 'Unknown error'}`);
+        throw new Error(res.error || 'Failed to send');
+      }
+
+      if (!window.desktopAPI) {
+        const newMsg: MailMessage = {
+          id: `msg-${Date.now()}`,
+          threadId: `th-${Date.now()}`,
+          senderName: activeAccount?.name || 'Me',
+          senderEmail: activeAccount?.email || 'me@corp.com',
+          recipientNames: [to],
+          recipientEmails: [to],
+          subject: draft.subject || '(No Subject)',
+          snippet,
+          bodyHtml: draft.bodyHtml,
+          date: 'Just now',
+          isRead: true,
+          isStarred: false,
+          hasAttachments: (draft.attachments?.length ?? 0) > 0,
+          folderId: 'sent',
+          labelIds: ['SENT', 'sent'],
+          category: 'focused',
+        };
+
+        const newThread: MailThread = {
+          id: newMsg.threadId,
+          folderId: 'sent',
+          labelIds: ['SENT', 'sent'],
+          subject: newMsg.subject,
+          snippet: newMsg.snippet,
+          participants: [
+            { name: newMsg.senderName, email: newMsg.senderEmail },
+            { name: to, email: to },
+          ],
+          lastDate: 'Just now',
+          messageCount: 1,
+          isRead: true,
+          isStarred: false,
+          hasAttachments: newMsg.hasAttachments,
+          category: 'focused',
+          messages: [newMsg],
+        };
+
+        setThreads((prev) => [newThread, ...prev]);
+      }
     },
     [activeAccount, activeAccountId, setThreads]
   );

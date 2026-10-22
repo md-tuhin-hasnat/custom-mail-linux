@@ -154,51 +154,27 @@ export function registerMailIpc(
     return storage.getAccountData(id);
   });
 
-  // Send email
+  // Send email with real Gmail API / SMTP dispatch
   ipcMain.handle(
     'mail:send-mail',
-    async (_, { draft, accountId }: { draft: Partial<MailMessage>; accountId?: string }) => {
+    async (_, { draft, accountId }: { draft: any; accountId?: string }) => {
       const id = getTargetAccountId(accountId);
-      const data = storage.getAccountData(id);
-      const accounts = storage.getAccounts();
-      const currentAccount = accounts.find((a) => a.id === id);
+      const result = await sendEmailMessage({
+        draft,
+        accountId: id,
+        storage,
+      });
 
-      const newMsg: MailMessage = {
-        id: `msg-${Date.now()}`,
-        threadId: `th-${Date.now()}`,
-        senderName: currentAccount?.name || 'Me',
-        senderEmail: currentAccount?.email || 'me@corp.com',
-        recipientNames: draft.recipientNames || [draft.recipientEmails?.[0] || 'recipient@corp.com'],
-        recipientEmails: draft.recipientEmails || ['recipient@corp.com'],
-        subject: draft.subject || '(No Subject)',
-        snippet: draft.snippet || draft.bodyHtml?.replace(/<[^>]+>/g, '').slice(0, 100) || '',
-        bodyHtml: draft.bodyHtml || '',
-        date: 'Just now',
-        isRead: true,
-        isStarred: false,
-        hasAttachments: false,
-        folderId: 'sent',
-        category: 'focused',
-      };
+      if (result.success) {
+        const win = getMainWindow();
+        const data = storage.getAccountData(id);
+        win?.webContents.send('mail:threads-updated', {
+          threads: data.threads,
+          folders: data.folders,
+        });
+      }
 
-      const newThread: MailThread = {
-        id: newMsg.threadId,
-        folderId: 'sent',
-        subject: newMsg.subject,
-        snippet: newMsg.snippet,
-        participants: [{ name: newMsg.senderName, email: newMsg.senderEmail }],
-        lastDate: 'Just now',
-        messageCount: 1,
-        isRead: true,
-        isStarred: false,
-        hasAttachments: false,
-        category: 'focused',
-        messages: [newMsg],
-      };
-
-      data.threads = [newThread, ...data.threads];
-      storage.saveAccountData(id, data);
-      return { success: true, id: newThread.id };
+      return result;
     }
   );
 

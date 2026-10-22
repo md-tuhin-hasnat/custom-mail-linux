@@ -30,7 +30,10 @@ export interface DesktopAPI {
     getFolders: (accountId?: string) => Promise<MailFolder[]>;
     getThreads: (folderId: string, accountId?: string) => Promise<MailThread[]>;
     getThreadMessages: (threadId: string, accountId?: string) => Promise<MailMessage[]>;
-    sendMail: (draft: Partial<MailMessage>, accountId?: string) => Promise<{ success: boolean; id: string }>;
+    sendMail: (
+      draft: Partial<MailMessage> & Record<string, any>,
+      accountId?: string
+    ) => Promise<{ success: boolean; id?: string; error?: string }>;
     markAsRead: (threadIds: string[], isRead: boolean, accountId?: string) => Promise<void>;
     toggleStar: (threadId: string, accountId?: string) => Promise<boolean>;
     toggleLock: (threadId: string, accountId?: string) => Promise<boolean>;
