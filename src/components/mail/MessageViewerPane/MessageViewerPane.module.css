@@ -86,6 +86,40 @@
   flex-shrink: 0;
 }
 
+.viewModeControl {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.viewModeBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.viewModeBtn:hover {
+  color: var(--text-primary);
+}
+
+.viewModeBtn.active {
+  background: rgba(0, 120, 212, 0.22);
+  color: #38bdf8;
+  font-weight: 600;
+}
+
 .themeToggleBtn {
   display: flex;
   align-items: center;

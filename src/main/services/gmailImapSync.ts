@@ -277,19 +277,28 @@ export function updateFolderCounts(
     const matches = data.threads.filter((t) => {
       const hasL = (name: string) => t.labelIds?.some((l) => norm(l) === name.toLowerCase());
 
-      return f.id === 'inbox'
-        ? t.folderId === 'inbox' || hasL('inbox')
-        : f.id === 'sent'
-        ? t.folderId === 'sent' || hasL('sent')
-        : f.id === 'trash'
-        ? t.folderId === 'trash' || hasL('trash') || hasL('bin')
-        : f.id === 'junk'
-        ? t.folderId === 'junk' || hasL('spam') || hasL('junk')
-        : f.id === 'drafts'
-        ? t.folderId === 'drafts' || hasL('draft') || hasL('drafts')
-        : f.id === 'archive'
-        ? t.folderId === 'archive' || (!hasL('inbox') && !hasL('trash') && !hasL('spam'))
-        : t.folderId === f.id || hasL(f.id) || (f.name && hasL(f.name));
+      if (f.id === 'inbox') {
+        return t.folderId === 'inbox' || (hasL('inbox') && t.folderId !== 'sent' && t.folderId !== 'outbox' && t.folderId !== 'trash' && t.folderId !== 'drafts');
+      }
+      if (f.id === 'sent') {
+        return t.folderId === 'sent' || (hasL('sent') && t.folderId !== 'trash' && t.folderId !== 'outbox');
+      }
+      if (f.id === 'outbox') {
+        return t.folderId === 'outbox' || hasL('outbox');
+      }
+      if (f.id === 'trash') {
+        return t.folderId === 'trash' || hasL('trash') || hasL('bin');
+      }
+      if (f.id === 'junk') {
+        return t.folderId === 'junk' || hasL('spam') || hasL('junk');
+      }
+      if (f.id === 'drafts') {
+        return t.folderId === 'drafts' || hasL('draft') || hasL('drafts');
+      }
+      if (f.id === 'archive') {
+        return t.folderId === 'archive' || (hasL('archive') && t.folderId !== 'sent' && t.folderId !== 'trash');
+      }
+      return t.folderId === f.id || hasL(f.id) || (f.name && hasL(f.name));
     });
 
     return {

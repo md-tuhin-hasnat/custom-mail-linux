@@ -10,7 +10,7 @@
 
 'use client';
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { getInitialData } from '@/data/mockData';
 import { MailMessage, MailThread } from '@/types/mail';
 import { WindowHeader } from '@/components/layout/WindowHeader/WindowHeader';
@@ -18,6 +18,7 @@ import { AppRail, ActiveTab } from '@/components/layout/AppRail/AppRail';
 import { StatusBar } from '@/components/layout/StatusBar/StatusBar';
 import { MailLayoutContainer } from '@/components/mail/MailLayoutContainer/MailLayoutContainer';
 import { MailComposerView, ComposeDraftPayload } from '@/components/composer/MailComposerView/MailComposerView';
+import { NewMessageToast } from '@/components/mail/NewMessageToast/NewMessageToast';
 import { AddAccountModal } from '@/components/account/AddAccountModal/AddAccountModal';
 import { CalendarView } from '@/components/calendar/CalendarView/CalendarView';
 import { ContactsView } from '@/components/contacts/ContactsView/ContactsView';
@@ -71,6 +72,9 @@ export default function App() {
     connectionName,
   } = useAccountManager();
 
+  // Navigation ref for deep linking from external notification events without stale closures
+  const navRef = useRef<(threadId: string) => void>(() => {});
+
   // Mailbox data & sync lifecycle hook
   const {
     folders,
@@ -79,6 +83,9 @@ export default function App() {
     isSyncing,
     syncStatus,
     syncProgress,
+    incomingToast,
+    setIncomingToast,
+    handleSimulateIncoming,
     loadAccountData,
     handleSync,
     handleResyncAll,
@@ -88,6 +95,7 @@ export default function App() {
     initialFolders: initialSeed.folders,
     initialThreads: initialSeed.threads,
     activeAccountId,
+    onNavigateToThread: (threadId) => navRef.current(threadId),
   });
 
   // Thread selection, filtering & batch actions hook
@@ -124,6 +132,13 @@ export default function App() {
       if (layoutMode === 'separate-page') setSeparateView('reader');
     },
   });
+
+  navRef.current = (threadId: string) => {
+    setActiveTab('mail');
+    setActiveFolderId('inbox');
+    handleSelectThread(threadId);
+    if (layoutMode === 'separate-page') setSeparateView('reader');
+  };
 
   // Calendar, Contacts & Tasks hook
   const {
@@ -164,68 +179,108 @@ export default function App() {
       const to = draft.to;
       const snippet = draft.bodyHtml.replace(/<[^>]+>/g, '').slice(0, 100);
 
-      const res = await window.desktopAPI?.mail.sendMail(
-        {
-          recipientEmails: [to],
-          recipientNames: [to],
-          subject: draft.subject || '(No Subject)',
-          snippet,
-          bodyHtml: draft.bodyHtml,
-          cc: draft.cc,
-          bcc: draft.bcc,
-          attachments: draft.attachments,
-        } as any,
-        activeAccountId
-      );
+      const outboxMsgId = `outbox-msg-${Date.now()}`;
+      const outboxThreadId = `outbox-th-${Date.now()}`;
+      const queuedMsg: MailMessage = {
+        id: outboxMsgId,
+        threadId: outboxThreadId,
+        senderName: activeAccount?.name || 'Me',
+        senderEmail: activeAccount?.email || 'me@corp.com',
+        recipientNames: [to],
+        recipientEmails: [to],
+        subject: draft.subject || '(No Subject)',
+        snippet,
+        bodyHtml: draft.bodyHtml,
+        date: 'Sending...',
+        isRead: true,
+        isStarred: false,
+        hasAttachments: (draft.attachments?.length ?? 0) > 0,
+        folderId: 'outbox',
+        labelIds: ['outbox'],
+        category: 'focused',
+      };
 
-      if (res && !res.success) {
-        alert(`Failed to send email: ${res.error || 'Unknown error'}`);
-        throw new Error(res.error || 'Failed to send');
-      }
+      const queuedThread: MailThread = {
+        id: outboxThreadId,
+        folderId: 'outbox',
+        labelIds: ['outbox'],
+        subject: queuedMsg.subject,
+        snippet: queuedMsg.snippet,
+        participants: [
+          { name: queuedMsg.senderName, email: queuedMsg.senderEmail },
+          { name: to, email: to },
+        ],
+        lastDate: 'Sending...',
+        messageCount: 1,
+        isRead: true,
+        isStarred: false,
+        hasAttachments: queuedMsg.hasAttachments,
+        category: 'focused',
+        messages: [queuedMsg],
+      };
 
-      if (!window.desktopAPI) {
-        const newMsg: MailMessage = {
-          id: `msg-${Date.now()}`,
-          threadId: `th-${Date.now()}`,
-          senderName: activeAccount?.name || 'Me',
-          senderEmail: activeAccount?.email || 'me@corp.com',
-          recipientNames: [to],
-          recipientEmails: [to],
-          subject: draft.subject || '(No Subject)',
-          snippet,
-          bodyHtml: draft.bodyHtml,
-          date: 'Just now',
-          isRead: true,
-          isStarred: false,
-          hasAttachments: (draft.attachments?.length ?? 0) > 0,
-          folderId: 'sent',
-          labelIds: ['SENT', 'sent'],
-          category: 'focused',
-        };
+      // Add to local state under outbox while transmitting
+      setThreads((prev) => [queuedThread, ...prev]);
 
-        const newThread: MailThread = {
-          id: newMsg.threadId,
-          folderId: 'sent',
-          labelIds: ['SENT', 'sent'],
-          subject: newMsg.subject,
-          snippet: newMsg.snippet,
-          participants: [
-            { name: newMsg.senderName, email: newMsg.senderEmail },
-            { name: to, email: to },
-          ],
-          lastDate: 'Just now',
-          messageCount: 1,
-          isRead: true,
-          isStarred: false,
-          hasAttachments: newMsg.hasAttachments,
-          category: 'focused',
-          messages: [newMsg],
-        };
+      try {
+        const res = await window.desktopAPI?.mail.sendMail(
+          {
+            recipientEmails: [to],
+            recipientNames: [to],
+            subject: draft.subject || '(No Subject)',
+            snippet,
+            bodyHtml: draft.bodyHtml,
+            cc: draft.cc,
+            bcc: draft.bcc,
+            attachments: draft.attachments,
+          } as any,
+          activeAccountId
+        );
 
-        setThreads((prev) => [newThread, ...prev]);
+        if (res && !res.success) {
+          alert(`Failed to send email: ${res.error || 'Unknown error'}`);
+          throw new Error(res.error || 'Failed to send');
+        }
+
+        if (window.desktopAPI) {
+          await loadAccountData(activeAccountId);
+        } else {
+          setThreads((prev) =>
+            prev.map((t) =>
+              t.id === outboxThreadId
+                ? {
+                    ...t,
+                    folderId: 'sent',
+                    labelIds: ['sent', 'SENT'],
+                    lastDate: 'Just now',
+                    messages: t.messages.map((m) => ({
+                      ...m,
+                      folderId: 'sent',
+                      labelIds: ['sent', 'SENT'],
+                      date: 'Just now',
+                    })),
+                  }
+                : t
+            )
+          );
+        }
+      } catch (err) {
+        console.error('Failed to dispatch email:', err);
+        setThreads((prev) =>
+          prev.map((t) =>
+            t.id === outboxThreadId
+              ? {
+                  ...t,
+                  lastDate: 'Send failed',
+                  messages: t.messages.map((m) => ({ ...m, date: 'Send failed' })),
+                }
+              : t
+          )
+        );
+        throw err;
       }
     },
-    [activeAccount, activeAccountId, setThreads]
+    [activeAccount, activeAccountId, loadAccountData, setThreads]
   );
 
   return (
@@ -245,6 +300,7 @@ export default function App() {
         }}
         onSync={handleSync}
         isSyncing={isSyncing}
+        onSimulateIncoming={handleSimulateIncoming}
       />
 
       <div className={styles.body}>
@@ -286,6 +342,7 @@ export default function App() {
             onBatchAction={handleBatchAction}
             selectedThread={selectedThread}
             activeAccountId={activeAccountId}
+            activeAccountEmail={activeAccount?.email}
             onReply={handleReply}
             onDeleteThread={handleDeleteThread}
             onMessagesUpdated={handleMessagesUpdated}
@@ -366,6 +423,20 @@ export default function App() {
         onDeleteAndResync={handleResyncAll}
         isSyncing={isSyncing}
       />
+
+      {incomingToast ? (
+        <NewMessageToast
+          message={incomingToast.message}
+          onView={() => {
+            setActiveTab('mail');
+            setActiveFolderId('inbox');
+            handleSelectThread(incomingToast.threadId);
+            if (layoutMode === 'separate-page') setSeparateView('reader');
+            setIncomingToast(null);
+          }}
+          onDismiss={() => setIncomingToast(null)}
+        />
+      ) : null}
     </div>
   );
 }

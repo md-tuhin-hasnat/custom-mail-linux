@@ -50,12 +50,14 @@ export function useThreadSelection({
       const matchesFolder =
         activeFolderId === 'all' ||
         t.folderId === activeFolderId ||
-        (activeFolderId === 'inbox' && (t.folderId === 'inbox' || hasL('inbox'))) ||
-        (activeFolderId === 'sent' && (t.folderId === 'sent' || hasL('sent'))) ||
+        (activeFolderId === 'inbox' && (t.folderId === 'inbox' || (hasL('inbox') && t.folderId !== 'sent' && t.folderId !== 'outbox' && t.folderId !== 'trash' && t.folderId !== 'drafts'))) ||
+        (activeFolderId === 'sent' && (t.folderId === 'sent' || (hasL('sent') && t.folderId !== 'trash' && t.folderId !== 'outbox'))) ||
+        (activeFolderId === 'outbox' && (t.folderId === 'outbox' || hasL('outbox'))) ||
         (activeFolderId === 'drafts' && (t.folderId === 'drafts' || hasL('draft') || hasL('drafts'))) ||
         (activeFolderId === 'trash' && (t.folderId === 'trash' || hasL('trash') || hasL('bin'))) ||
+        (activeFolderId === 'junk' && (t.folderId === 'junk' || hasL('spam') || hasL('junk'))) ||
         (activeFolderId === 'spam' && (t.folderId === 'spam' || hasL('spam') || hasL('junk'))) ||
-        (activeFolderId === 'archive' && (t.folderId === 'archive' || hasL('archive') || hasL('all mail'))) ||
+        (activeFolderId === 'archive' && (t.folderId === 'archive' || hasL('archive') || (hasL('all mail') && t.folderId !== 'sent' && t.folderId !== 'trash' && t.folderId !== 'outbox'))) ||
         (curName && t.labelIds?.some((l) => norm(l) === curName));
 
       if (!matchesFolder) return false;

@@ -8,12 +8,17 @@
 import tls from 'node:tls';
 import { AccountConfig } from '../../types/account';
 import { StorageService } from './storageService';
-import { MailFolder, MailThread } from '../../types/mail';
+import { MailFolder, MailThread, MailMessage } from '../../types/mail';
 import { groupMessagesIntoThreads } from './gmailParser';
 import { parseImapEnvelopeLine, envelopeToMailMessage } from './imapParser';
 import { updateFolderCounts } from './gmailImapSync';
+import { refreshGoogleToken } from './googleAuth';
 
-export type RealtimeUpdateCallback = (threads: MailThread[], folders: MailFolder[]) => void;
+export type RealtimeUpdateCallback = (
+  threads: MailThread[],
+  folders: MailFolder[],
+  incomingMessages?: MailMessage[]
+) => void;
 
 let activeSocket: tls.TLSSocket | null = null;
 let keepAliveTimer: NodeJS.Timeout | null = null;
@@ -46,7 +51,7 @@ export function startGmailIdleWatcher(
     return () => {};
   }
 
-  const token = account.oauth.accessToken;
+  let token = account.oauth.accessToken;
   const email = account.email;
   let buffer = '';
   let seq = 100;
@@ -133,7 +138,11 @@ export function startGmailIdleWatcher(
         );
         updateFolderCounts(data);
         storage.saveAccountData(account.id, data);
-        onUpdate(data.threads, data.folders);
+
+        const incomingMsgs = newMsgs.filter(
+          (m) => m.senderEmail?.toLowerCase() !== email.toLowerCase()
+        );
+        onUpdate(data.threads, data.folders, incomingMsgs);
       }
 
       await enterIdle();
@@ -143,8 +152,18 @@ export function startGmailIdleWatcher(
     }
   }
 
-  function connect() {
+  async function connect() {
     if (isStopping) return;
+
+    // Refresh token before connecting if refresh token is available
+    if (account.oauth?.refreshToken) {
+      const refreshed = await refreshGoogleToken(account, (updatedAcc) => {
+        const all = storage.getAccounts();
+        storage.saveAccounts(all.map((a) => (a.id === updatedAcc.id ? updatedAcc : a)));
+      });
+      if (refreshed) token = refreshed;
+    }
+
     const socket = tls.connect(993, 'imap.gmail.com', { rejectUnauthorized: false });
     activeSocket = socket;
     socket.setEncoding('utf8');

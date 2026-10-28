@@ -26,10 +26,17 @@ export function parseImapFolders(listLines: string[]): MailFolder[] {
   const systemMap: Record<string, { id: string; name: string; icon: string }> = {
     inbox: { id: 'inbox', name: 'Inbox', icon: 'Inbox' },
     '[gmail]/sent mail': { id: 'sent', name: 'Sent Items', icon: 'Send' },
+    sent: { id: 'sent', name: 'Sent Items', icon: 'Send' },
     '[gmail]/drafts': { id: 'drafts', name: 'Drafts', icon: 'FileText' },
+    drafts: { id: 'drafts', name: 'Drafts', icon: 'FileText' },
+    outbox: { id: 'outbox', name: 'Outbox', icon: 'SendHorizontal' },
     '[gmail]/all mail': { id: 'archive', name: 'Archive', icon: 'Archive' },
+    archive: { id: 'archive', name: 'Archive', icon: 'Archive' },
     '[gmail]/spam': { id: 'junk', name: 'Junk Email', icon: 'AlertOctagon' },
+    junk: { id: 'junk', name: 'Junk Email', icon: 'AlertOctagon' },
+    spam: { id: 'junk', name: 'Junk Email', icon: 'AlertOctagon' },
     '[gmail]/trash': { id: 'trash', name: 'Deleted Items', icon: 'Trash2' },
+    trash: { id: 'trash', name: 'Deleted Items', icon: 'Trash2' },
   };
 
   for (const line of listLines) {
@@ -62,6 +69,17 @@ export function parseImapFolders(listLines: string[]): MailFolder[] {
         system: false,
       });
     }
+  }
+
+  if (!folders.some((f) => f.id === 'outbox')) {
+    folders.push({
+      id: 'outbox',
+      name: 'Outbox',
+      icon: 'SendHorizontal',
+      unreadCount: 0,
+      totalCount: 0,
+      system: true,
+    });
   }
 
   return folders;
@@ -200,13 +218,18 @@ export function cleanEmailSubject(raw: string): string {
 
 export function envelopeToMailMessage(env: ParsedImapEnvelope): MailMessage {
   const norm = (l: string) => l.replace(/^[\\\/"]+|[\\\/"]+$/g, '').toLowerCase();
-  const hasLabel = (name: string) => env.labelIds.some((l) => norm(l) === name.toLowerCase());
+  const hasLabel = (name: string) =>
+    env.labelIds.some((l) => {
+      const nl = norm(l);
+      return nl === name || nl.includes(name);
+    });
 
   let folderId = 'archive';
   if (hasLabel('trash') || hasLabel('bin')) folderId = 'trash';
   else if (hasLabel('spam') || hasLabel('junk')) folderId = 'junk';
-  else if (hasLabel('draft') || hasLabel('drafts')) folderId = 'drafts';
+  else if (hasLabel('draft')) folderId = 'drafts';
   else if (hasLabel('sent')) folderId = 'sent';
+  else if (hasLabel('outbox')) folderId = 'outbox';
   else if (hasLabel('inbox')) folderId = 'inbox';
 
   return {

@@ -132,12 +132,17 @@ export function parseGmailMessage(msg: GmailMessageResponse): MailMessage {
       )
     );
 
+  const normLabels = (msg.labelIds || []).map((l) =>
+    l.replace(/^[\\\/"]+|[\\\/"]+$/g, '').toLowerCase()
+  );
+
   let folderId = 'inbox';
-  if (msg.labelIds?.includes('SENT')) folderId = 'sent';
-  else if (msg.labelIds?.includes('DRAFT')) folderId = 'drafts';
-  else if (msg.labelIds?.includes('TRASH')) folderId = 'trash';
-  else if (msg.labelIds?.includes('SPAM')) folderId = 'junk';
-  else if (!msg.labelIds?.includes('INBOX')) folderId = 'archive';
+  if (normLabels.includes('sent') || normLabels.includes('[gmail]/sent mail') || normLabels.includes('sent items')) folderId = 'sent';
+  else if (normLabels.includes('outbox')) folderId = 'outbox';
+  else if (normLabels.includes('draft') || normLabels.includes('drafts')) folderId = 'drafts';
+  else if (normLabels.includes('trash') || normLabels.includes('bin')) folderId = 'trash';
+  else if (normLabels.includes('spam') || normLabels.includes('junk')) folderId = 'junk';
+  else if (!normLabels.includes('inbox')) folderId = 'archive';
 
   return {
     id: `msg-gmail-${msg.id}`,
@@ -197,14 +202,23 @@ export function groupMessagesIntoThreads(
       if (newMsg.hasAttachments) existing.hasAttachments = true;
 
       // Never revert trash back to inbox
-      if (existing.folderId !== 'trash') {
-        if (newMsg.folderId === 'inbox') existing.folderId = 'inbox';
+      if (existing.folderId !== 'trash' && existing.folderId !== 'outbox') {
         if (newMsg.labelIds) {
           const mergedLabels = new Set([...(existing.labelIds || []), ...newMsg.labelIds]);
           existing.labelIds = Array.from(mergedLabels);
-          if (existing.labelIds.some((l) => l.replace(/^[\\\/"]+|[\\\/"]+$/g, '').toLowerCase() === 'inbox')) {
-            existing.folderId = 'inbox';
-          }
+        }
+
+        const allMessagesSent =
+          existing.messages.length > 0 &&
+          existing.messages.every((m) => m.folderId === 'sent');
+
+        if (allMessagesSent) {
+          existing.folderId = 'sent';
+        } else if (
+          newMsg.folderId === 'inbox' ||
+          existing.labelIds?.some((l) => l.replace(/^[\\\/"]+|[\\\/"]+$/g, '').toLowerCase() === 'inbox')
+        ) {
+          existing.folderId = 'inbox';
         }
       }
 
@@ -212,13 +226,28 @@ export function groupMessagesIntoThreads(
         existing.participants.push({ name: newMsg.senderName, email: newMsg.senderEmail });
       }
     } else {
+      const normLabels = (newMsg.labelIds || []).map((l) =>
+        l.replace(/^[\\\/"]+|[\\\/"]+$/g, '').toLowerCase()
+      );
+      const isSent =
+        newMsg.folderId === 'sent' ||
+        normLabels.includes('sent') ||
+        normLabels.includes('[gmail]/sent mail') ||
+        normLabels.includes('sent items');
+      const isOutbox = newMsg.folderId === 'outbox' || normLabels.includes('outbox');
       const isInbox =
-        newMsg.folderId === 'inbox' ||
-        newMsg.labelIds?.some((l) => l.replace(/^[\\\/"]+|[\\\/"]+$/g, '').toLowerCase() === 'inbox');
+        !isSent &&
+        !isOutbox &&
+        (newMsg.folderId === 'inbox' || normLabels.includes('inbox'));
+
+      let initialFolderId = newMsg.folderId;
+      if (isSent) initialFolderId = 'sent';
+      else if (isOutbox) initialFolderId = 'outbox';
+      else if (isInbox) initialFolderId = 'inbox';
 
       threadMap.set(newMsg.threadId, {
         id: newMsg.threadId,
-        folderId: isInbox ? 'inbox' : newMsg.folderId,
+        folderId: initialFolderId,
         subject: newMsg.subject,
         snippet: newMsg.snippet,
         participants: [{ name: newMsg.senderName, email: newMsg.senderEmail }],

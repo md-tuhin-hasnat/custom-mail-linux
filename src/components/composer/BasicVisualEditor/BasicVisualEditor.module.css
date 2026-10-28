@@ -112,7 +112,7 @@
 
 .editor:empty::before {
   content: attr(data-placeholder);
-  color: var(--text-muted, #5f6368);
+  color: var(--text-muted, #9aa1b0);
   cursor: text;
 }
 

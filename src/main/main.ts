@@ -14,6 +14,7 @@ import { getInitialData } from '../data/mockData';
 import { AccountConfig } from '../types/account';
 import { syncGmailAccountImap } from './services/gmailImapSync';
 import { startGmailIdleWatcher, stopGmailIdleWatcher } from './services/gmailIdleWatcher';
+import { showDesktopNotification } from './services/notificationService';
 import { registerWindowIpc } from './ipc/windowIpc';
 import { registerAuthIpc } from './ipc/authIpc';
 import { registerMailIpc } from './ipc/mailIpc';
@@ -102,11 +103,31 @@ function startRealtimeSync(acc: AccountConfig | null) {
   });
 
   // Start background IDLE push notification watcher
-  startGmailIdleWatcher(acc, storage, (newThreads, newFolders) => {
+  startGmailIdleWatcher(acc, storage, (newThreads, newFolders, incomingMessages) => {
     mainWindow?.webContents.send('mail:threads-updated', {
       threads: newThreads,
       folders: newFolders,
     });
+
+    if (incomingMessages && incomingMessages.length > 0) {
+      for (const msg of incomingMessages) {
+        showDesktopNotification(
+          {
+            senderName: msg.senderName,
+            senderEmail: msg.senderEmail,
+            subject: msg.subject,
+            snippet: msg.snippet,
+            threadId: msg.threadId,
+          },
+          () => mainWindow
+        );
+
+        mainWindow?.webContents.send('mail:new-message-arrived', {
+          message: msg,
+          threadId: msg.threadId,
+        });
+      }
+    }
   });
 }
 

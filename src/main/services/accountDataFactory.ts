@@ -21,6 +21,7 @@ export function createInitialAccountData(account?: AccountConfig): AccountDataSt
     { id: 'inbox', name: 'Inbox', icon: 'Inbox', unreadCount: 1, totalCount: 1, system: true },
     { id: 'sent', name: 'Sent Items', icon: 'Send', unreadCount: 0, totalCount: 0, system: true },
     { id: 'drafts', name: 'Drafts', icon: 'FileText', unreadCount: 0, totalCount: 0, system: true },
+    { id: 'outbox', name: 'Outbox', icon: 'SendHorizontal', unreadCount: 0, totalCount: 0, system: true },
     { id: 'archive', name: 'Archive', icon: 'Archive', unreadCount: 0, totalCount: 0, system: true },
     { id: 'junk', name: 'Junk Email', icon: 'AlertOctagon', unreadCount: 0, totalCount: 0, system: true },
     { id: 'trash', name: 'Deleted Items', icon: 'Trash2', unreadCount: 0, totalCount: 0, system: true },

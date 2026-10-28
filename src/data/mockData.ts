@@ -4,15 +4,96 @@ import { Contact } from '../types/contacts';
 import { TaskItem } from '../types/tasks';
 
 export const initialFolders: MailFolder[] = [
-  { id: 'inbox', name: 'Inbox', icon: 'Inbox', unreadCount: 3, totalCount: 42, system: true },
-  { id: 'sent', name: 'Sent Items', icon: 'Send', unreadCount: 0, totalCount: 128, system: true },
-  { id: 'drafts', name: 'Drafts', icon: 'FileText', unreadCount: 1, totalCount: 3, system: true },
-  { id: 'archive', name: 'Archive', icon: 'Archive', unreadCount: 0, totalCount: 894, system: true },
-  { id: 'junk', name: 'Junk Email', icon: 'AlertOctagon', unreadCount: 4, totalCount: 12, system: true },
-  { id: 'trash', name: 'Deleted Items', icon: 'Trash2', unreadCount: 0, totalCount: 19, system: true },
+  { id: 'inbox', name: 'Inbox', icon: 'Inbox', unreadCount: 2, totalCount: 2, system: true },
+  { id: 'sent', name: 'Sent Items', icon: 'Send', unreadCount: 0, totalCount: 1, system: true },
+  { id: 'drafts', name: 'Drafts', icon: 'FileText', unreadCount: 1, totalCount: 1, system: true },
+  { id: 'outbox', name: 'Outbox', icon: 'SendHorizontal', unreadCount: 0, totalCount: 0, system: true },
+  { id: 'archive', name: 'Archive', icon: 'Archive', unreadCount: 0, totalCount: 0, system: true },
+  { id: 'junk', name: 'Junk Email', icon: 'AlertOctagon', unreadCount: 0, totalCount: 0, system: true },
+  { id: 'trash', name: 'Deleted Items', icon: 'Trash2', unreadCount: 0, totalCount: 0, system: true },
 ];
 
 export const initialThreads: MailThread[] = [
+  {
+    id: 'th-sent-1',
+    folderId: 'sent',
+    labelIds: ['sent', 'SENT'],
+    subject: 'Sprint Deliverables & Linux AppImage Package Update',
+    snippet: 'Hi Elena, I have finalized the v1.0.0 AppImage build and verified Wayland fractional scaling...',
+    participants: [
+      { name: 'Touhidur Rahman', email: 'touhidur@enterprise.corp' },
+      { name: 'Elena Rostova', email: 'elena.rostova@enterprise.corp' }
+    ],
+    lastDate: 'Oct 22, 2026, 02:15 PM',
+    messageCount: 1,
+    isRead: true,
+    isStarred: false,
+    hasAttachments: true,
+    category: 'focused',
+    messages: [
+      {
+        id: 'msg-sent-101',
+        threadId: 'th-sent-1',
+        senderName: 'Touhidur Rahman',
+        senderEmail: 'touhidur@enterprise.corp',
+        recipientNames: ['Elena Rostova'],
+        recipientEmails: ['elena.rostova@enterprise.corp'],
+        subject: 'Sprint Deliverables & Linux AppImage Package Update',
+        snippet: 'Hi Elena, I have finalized the v1.0.0 AppImage build and verified Wayland fractional scaling...',
+        bodyHtml: `<p>Hi Elena,</p>
+<p>I have finalized the v1.0.0 AppImage build for Custom Mail Linux and verified Wayland fractional scaling on GNOME 47 and KDE Plasma 6. Memory usage stays under 120MB with 15,000 cached headers.</p>
+<p>The package and checksums are attached.</p>
+<p>Best regards,<br/><strong>Touhidur Rahman</strong></p>`,
+        date: 'Oct 22, 2026, 02:15 PM',
+        isRead: true,
+        isStarred: false,
+        hasAttachments: true,
+        folderId: 'sent',
+        labelIds: ['sent', 'SENT'],
+        category: 'focused',
+        attachments: [
+          { id: 'att-sent-1', name: 'custom-mail-x86_64.AppImage', size: 84934656, mimeType: 'application/x-executable', extension: 'AppImage' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'th-draft-1',
+    folderId: 'drafts',
+    labelIds: ['draft', 'drafts', 'DRAFT'],
+    subject: 'Draft: Internal Announcement - Linux Desktop Client Release',
+    snippet: 'Team, we are pleased to roll out the custom Linux email client across all dev environments...',
+    participants: [
+      { name: 'Touhidur Rahman', email: 'touhidur@enterprise.corp' }
+    ],
+    lastDate: 'Oct 23, 2026, 11:00 AM',
+    messageCount: 1,
+    isRead: true,
+    isStarred: false,
+    hasAttachments: false,
+    category: 'focused',
+    messages: [
+      {
+        id: 'msg-draft-101',
+        threadId: 'th-draft-1',
+        senderName: 'Touhidur Rahman',
+        senderEmail: 'touhidur@enterprise.corp',
+        recipientNames: ['Engineering All'],
+        recipientEmails: ['eng-all@enterprise.corp'],
+        subject: 'Draft: Internal Announcement - Linux Desktop Client Release',
+        snippet: 'Team, we are pleased to roll out the custom Linux email client across all dev environments...',
+        bodyHtml: `<p>Team,</p>
+<p>We are pleased to announce the general availability of the new Linux Desktop email client, featuring local hardware keyring security, instant thread search, and zero-distraction messenger views.</p>`,
+        date: 'Oct 23, 2026, 11:00 AM',
+        isRead: true,
+        isStarred: false,
+        hasAttachments: false,
+        folderId: 'drafts',
+        labelIds: ['draft', 'drafts', 'DRAFT'],
+        category: 'focused'
+      }
+    ]
+  },
   {
     id: 'th-1',
     folderId: 'inbox',

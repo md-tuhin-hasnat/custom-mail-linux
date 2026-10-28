@@ -12,6 +12,7 @@ import { MailThread, MailMessage } from '../../types/mail';
 import { parseGmailMessage } from '../services/gmailParser';
 import { syncGmailAccountImap } from '../services/gmailImapSync';
 import { sendEmailMessage } from '../services/emailSendService';
+import { showDesktopNotification } from '../services/notificationService';
 
 export function registerMailIpc(
   storage: StorageService,
@@ -38,13 +39,26 @@ export function registerMailIpc(
       return data.threads.filter((t) => {
         const hasL = (name: string) => t.labelIds?.some((l) => norm(l) === name.toLowerCase());
 
-        if (folderId === 'inbox') return t.folderId === 'inbox' || hasL('inbox');
-        if (folderId === 'sent') return t.folderId === 'sent' || hasL('sent');
-        if (folderId === 'trash') return t.folderId === 'trash' || hasL('trash') || hasL('bin');
-        if (folderId === 'junk') return t.folderId === 'junk' || hasL('spam') || hasL('junk');
-        if (folderId === 'drafts') return t.folderId === 'drafts' || hasL('draft') || hasL('drafts');
+        if (folderId === 'inbox') {
+          return t.folderId === 'inbox' || (hasL('inbox') && t.folderId !== 'sent' && t.folderId !== 'outbox' && t.folderId !== 'trash' && t.folderId !== 'drafts');
+        }
+        if (folderId === 'sent') {
+          return t.folderId === 'sent' || (hasL('sent') && t.folderId !== 'trash' && t.folderId !== 'outbox');
+        }
+        if (folderId === 'outbox') {
+          return t.folderId === 'outbox' || hasL('outbox');
+        }
+        if (folderId === 'trash') {
+          return t.folderId === 'trash' || hasL('trash') || hasL('bin');
+        }
+        if (folderId === 'junk') {
+          return t.folderId === 'junk' || hasL('spam') || hasL('junk');
+        }
+        if (folderId === 'drafts') {
+          return t.folderId === 'drafts' || hasL('draft') || hasL('drafts');
+        }
         if (folderId === 'archive') {
-          return t.folderId === 'archive' || (!hasL('inbox') && !hasL('trash') && !hasL('spam'));
+          return t.folderId === 'archive' || (hasL('archive') && t.folderId !== 'sent' && t.folderId !== 'trash');
         }
         return t.folderId === folderId || hasL(folderId);
       });
@@ -293,6 +307,108 @@ export function registerMailIpc(
 
       storage.saveAccountData(id, data);
       return { success: true, count: threadIds.length };
+    }
+  );
+
+  // Simulate an incoming message for testing or demonstration
+  ipcMain.handle(
+    'mail:simulate-incoming',
+    async (_, { sample, accountId }: { sample?: Partial<MailMessage>; accountId?: string } = {}) => {
+      const id = getTargetAccountId(accountId);
+      const data = storage.getAccountData(id);
+      const threadId = `th-incoming-${Date.now()}`;
+      const msgId = `msg-incoming-${Date.now()}`;
+
+      const newMsg: MailMessage = {
+        id: msgId,
+        threadId,
+        senderName: sample?.senderName || 'Sarah Sterling',
+        senderEmail: sample?.senderEmail || 'sarah.sterling@enterprise.corp',
+        recipientNames: ['Touhidur Rahman'],
+        recipientEmails: ['touhidur@enterprise.corp'],
+        subject: sample?.subject || 'Urgent: Project Delivery Status Review',
+        snippet:
+          sample?.snippet ||
+          'Hi, please review the latest sprint updates and let us know your feedback before tomorrow.',
+        bodyHtml:
+          sample?.bodyHtml ||
+          '<p>Hi,</p><p>Please review the latest sprint updates and let us know your feedback before tomorrow.</p><p>Best regards,<br/><strong>Sarah Sterling</strong></p>',
+        date: 'Just now',
+        isRead: false,
+        isStarred: false,
+        hasAttachments: false,
+        folderId: 'inbox',
+        labelIds: ['inbox', 'INBOX'],
+        category: 'focused',
+      };
+
+      const newThread: MailThread = {
+        id: threadId,
+        folderId: 'inbox',
+        labelIds: ['inbox', 'INBOX'],
+        subject: newMsg.subject,
+        snippet: newMsg.snippet,
+        participants: [
+          { name: newMsg.senderName, email: newMsg.senderEmail },
+          { name: 'Touhidur Rahman', email: 'touhidur@enterprise.corp' },
+        ],
+        lastDate: 'Just now',
+        messageCount: 1,
+        isRead: false,
+        isStarred: false,
+        hasAttachments: false,
+        category: 'focused',
+        messages: [newMsg],
+      };
+
+      data.threads = [newThread, ...data.threads];
+      const inboxFolder = data.folders.find((f) => f.id === 'inbox');
+      if (inboxFolder) {
+        inboxFolder.unreadCount = (inboxFolder.unreadCount || 0) + 1;
+        inboxFolder.totalCount = (inboxFolder.totalCount || 0) + 1;
+      }
+      storage.saveAccountData(id, data);
+
+      const win = getMainWindow();
+      showDesktopNotification(
+        {
+          senderName: newMsg.senderName,
+          senderEmail: newMsg.senderEmail,
+          subject: newMsg.subject,
+          snippet: newMsg.snippet,
+          threadId: newThread.id,
+        },
+        getMainWindow
+      );
+
+      win?.webContents.send('mail:new-message-arrived', {
+        message: newMsg,
+        threadId: newThread.id,
+      });
+
+      win?.webContents.send('mail:threads-updated', {
+        threads: data.threads,
+        folders: data.folders,
+      });
+
+      return { success: true, threadId: newThread.id };
+    }
+  );
+
+  // Manual trigger for desktop notification
+  ipcMain.handle(
+    'mail:show-notification',
+    async (_, { title, body, threadId }: { title: string; body: string; threadId?: string }) => {
+      showDesktopNotification(
+        {
+          senderName: title,
+          subject: body,
+          snippet: body,
+          threadId,
+        },
+        getMainWindow
+      );
+      return true;
     }
   );
 }

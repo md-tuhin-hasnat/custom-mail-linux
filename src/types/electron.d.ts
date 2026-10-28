@@ -78,8 +78,15 @@ export interface DesktopAPI {
       mimeType: string;
       accountId?: string;
     }) => Promise<{ success: boolean; canceled?: boolean; filePath?: string; error?: string }>;
+    simulateIncomingMail: (
+      sample?: Partial<MailMessage>,
+      accountId?: string
+    ) => Promise<{ success: boolean; threadId: string }>;
+    showNotification: (params: { title: string; body: string; threadId?: string }) => Promise<void>;
     onSyncProgress: (callback: (data: { current: number; total: number; status: string; isSyncing: boolean }) => void) => () => void;
     onThreadsUpdated: (callback: (data: { threads: MailThread[]; folders: MailFolder[] }) => void) => () => void;
+    onNewMessage: (callback: (data: { message: MailMessage; threadId: string }) => void) => () => void;
+    onNavigateToThread: (callback: (data: { threadId: string }) => void) => () => void;
   };
   calendar: {
     getEvents: (accountId?: string) => Promise<CalendarEvent[]>;

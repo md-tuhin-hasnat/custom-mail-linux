@@ -219,20 +219,36 @@ function updateFolderCounts(data: ReturnType<StorageService['getAccountData']>, 
 
   const mergedFolders = Array.from(folderMap.values());
 
+  const norm = (l: string) => l.replace(/^[\\\/"]+|[\\\/"]+$/g, '').toLowerCase();
+
   data.folders = mergedFolders.map((f) => {
-    const matches = data.threads.filter((t) =>
-      f.id === 'inbox'
-        ? t.folderId === 'inbox' || t.labelIds?.includes('INBOX')
-        : f.id === 'sent'
-        ? t.folderId === 'sent' || t.labelIds?.includes('SENT')
-        : f.id === 'trash'
-        ? t.folderId === 'trash' || t.labelIds?.includes('TRASH')
-        : f.id === 'junk'
-        ? t.folderId === 'junk' || t.labelIds?.includes('SPAM')
-        : f.id === 'drafts'
-        ? t.folderId === 'drafts' || t.labelIds?.includes('DRAFT')
-        : t.folderId === f.id || t.labelIds?.includes(f.id)
-    );
+    const matches = data.threads.filter((t) => {
+      const hasL = (name: string) => t.labelIds?.some((l) => norm(l) === name.toLowerCase());
+
+      if (f.id === 'inbox') {
+        return t.folderId === 'inbox' || (hasL('inbox') && t.folderId !== 'sent' && t.folderId !== 'outbox' && t.folderId !== 'trash' && t.folderId !== 'drafts');
+      }
+      if (f.id === 'sent') {
+        return t.folderId === 'sent' || (hasL('sent') && t.folderId !== 'trash' && t.folderId !== 'outbox');
+      }
+      if (f.id === 'outbox') {
+        return t.folderId === 'outbox' || hasL('outbox');
+      }
+      if (f.id === 'trash') {
+        return t.folderId === 'trash' || hasL('trash') || hasL('bin');
+      }
+      if (f.id === 'junk') {
+        return t.folderId === 'junk' || hasL('spam') || hasL('junk');
+      }
+      if (f.id === 'drafts') {
+        return t.folderId === 'drafts' || hasL('draft') || hasL('drafts');
+      }
+      if (f.id === 'archive') {
+        return t.folderId === 'archive' || (hasL('archive') && t.folderId !== 'sent' && t.folderId !== 'trash');
+      }
+      return t.folderId === f.id || hasL(f.id) || (f.name && hasL(f.name));
+    });
+
     return {
       ...f,
       unreadCount: matches.filter((t) => !t.isRead).length,

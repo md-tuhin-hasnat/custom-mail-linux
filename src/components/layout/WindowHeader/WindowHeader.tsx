@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { Mail, Minus, Square, X, RotateCw, Columns3, Rows2, SquareSplitHorizontal, Settings } from 'lucide-react';
+import { Mail, Minus, Square, X, RotateCw, Columns3, Rows2, SquareSplitHorizontal, Settings, Bell } from 'lucide-react';
 import { SearchBar } from '@/components/common/SearchBar/SearchBar';
 import { AccountSwitcher } from '@/components/account/AccountSwitcher/AccountSwitcher';
 import { AccountConfig } from '@/types/account';
@@ -15,6 +15,7 @@ interface WindowHeaderProps {
   onOpenAddAccount: () => void;
   onSync?: () => void;
   isSyncing?: boolean;
+  onSimulateIncoming?: () => void;
   layoutMode?: MailLayoutMode;
   onLayoutModeChange?: (mode: MailLayoutMode) => void;
   onOpenSettings?: () => void;
@@ -29,6 +30,7 @@ export const WindowHeader = React.memo(function WindowHeader({
   onOpenAddAccount,
   onSync,
   isSyncing = false,
+  onSimulateIncoming,
   layoutMode,
   onLayoutModeChange,
   onOpenSettings,
@@ -72,6 +74,18 @@ export const WindowHeader = React.memo(function WindowHeader({
             disabled={isSyncing}
           >
             <RotateCw size={14} />
+          </button>
+        ) : null}
+
+        {onSimulateIncoming ? (
+          <button
+            className={styles.actionBtn}
+            onClick={onSimulateIncoming}
+            title="Simulate Incoming Mail & Notification"
+            aria-label="Simulate Incoming Mail"
+            type="button"
+          >
+            <Bell size={14} />
           </button>
         ) : null}
 

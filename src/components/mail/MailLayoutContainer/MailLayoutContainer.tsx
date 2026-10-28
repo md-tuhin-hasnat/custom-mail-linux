@@ -50,6 +50,7 @@ interface MailLayoutContainerProps {
   onBatchAction: (action: BatchActionType) => void;
   selectedThread: MailThread | null;
   activeAccountId: string;
+  activeAccountEmail?: string;
   onReply: () => void;
   onDeleteThread: (id: string) => void;
   onMessagesUpdated: (threadId: string, messages: MailMessage[]) => void;
@@ -86,6 +87,7 @@ export const MailLayoutContainer = React.memo(function MailLayoutContainer({
   onBatchAction,
   selectedThread,
   activeAccountId,
+  activeAccountEmail,
   onReply,
   onDeleteThread,
   onMessagesUpdated,
@@ -130,6 +132,7 @@ export const MailLayoutContainer = React.memo(function MailLayoutContainer({
             <MessageViewerPane
               thread={selectedThread}
               activeAccountId={activeAccountId}
+              activeAccountEmail={activeAccountEmail}
               onReply={onReply}
               onDeleteThread={onDeleteThread}
               onToggleStar={onToggleStar}
@@ -183,6 +186,7 @@ export const MailLayoutContainer = React.memo(function MailLayoutContainer({
             <MessageViewerPane
               thread={selectedThread}
               activeAccountId={activeAccountId}
+              activeAccountEmail={activeAccountEmail}
               onReply={onReply}
               onDeleteThread={onDeleteThread}
               onToggleStar={onToggleStar}
@@ -231,6 +235,7 @@ export const MailLayoutContainer = React.memo(function MailLayoutContainer({
       <MessageViewerPane
         thread={selectedThread}
         activeAccountId={activeAccountId}
+        activeAccountEmail={activeAccountEmail}
         onReply={onReply}
         onDeleteThread={onDeleteThread}
         onToggleStar={onToggleStar}

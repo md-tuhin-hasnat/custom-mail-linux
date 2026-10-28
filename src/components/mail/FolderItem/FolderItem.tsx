@@ -1,5 +1,5 @@
 import React from 'react';
-import { Inbox, Send, FileText, Archive, AlertOctagon, Trash2, Folder } from 'lucide-react';
+import { Inbox, Send, SendHorizontal, FileText, Archive, AlertOctagon, Trash2, Folder } from 'lucide-react';
 import { MailFolder } from '@/types/mail';
 import styles from './FolderItem.module.css';
 
@@ -15,6 +15,9 @@ function getFolderIcon(iconName: string) {
       return <Inbox size={16} />;
     case 'Send':
       return <Send size={16} />;
+    case 'SendHorizontal':
+    case 'Outbox':
+      return <SendHorizontal size={16} />;
     case 'FileText':
       return <FileText size={16} />;
     case 'Archive':
@@ -46,7 +49,9 @@ export const FolderItem = React.memo(function FolderItem({
         <span className={styles.name}>{folder.name}</span>
       </div>
       {folder.unreadCount > 0 ? (
-        <span className={styles.count}>{folder.unreadCount}</span>
+        <span className={styles.count} suppressHydrationWarning>
+          {folder.unreadCount}
+        </span>
       ) : null}
     </button>
   );

@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import dynamic from 'next/dynamic';
-import { Mail, Reply, ArrowLeft, Sun, Moon, Loader2 } from 'lucide-react';
+import { Mail, Reply, ArrowLeft, Sun, Moon, Loader2, MessageSquare, FileText } from 'lucide-react';
 import { MailThread, MailMessage, Attachment } from '@/types/mail';
 import { MessageHeader } from '@/components/mail/MessageHeader/MessageHeader';
 import { MessageBody } from '@/components/mail/MessageBody/MessageBody';
 import { AttachmentList } from '@/components/mail/AttachmentList/AttachmentList';
+import { MessengerConversationView } from '@/components/mail/MessengerConversationView/MessengerConversationView';
 import { Button } from '@/components/common/Button/Button';
 import styles from './MessageViewerPane.module.css';
 
@@ -18,6 +19,7 @@ const MediaViewerModal = dynamic(
 interface MessageViewerPaneProps {
   thread: MailThread | null;
   activeAccountId?: string;
+  activeAccountEmail?: string;
   onReply: () => void;
   onDeleteThread: (id: string) => void;
   onToggleStar: (id: string) => void;
@@ -30,6 +32,7 @@ interface MessageViewerPaneProps {
 export const MessageViewerPane = React.memo(function MessageViewerPane({
   thread,
   activeAccountId,
+  activeAccountEmail,
   onReply,
   onDeleteThread,
   onToggleStar,
@@ -38,6 +41,7 @@ export const MessageViewerPane = React.memo(function MessageViewerPane({
   onMessagesUpdated,
   defaultCanvasTheme = 'white',
 }: MessageViewerPaneProps) {
+  const [viewMode, setViewMode] = useState<'messenger' | 'standard'>('messenger');
   const [canvasTheme, setCanvasTheme] = useState<'white' | 'dark'>(defaultCanvasTheme);
   const [messages, setMessages] = useState<MailMessage[]>(thread?.messages || []);
   const [isLoadingBody, setIsLoadingBody] = useState(false);
@@ -110,6 +114,48 @@ export const MessageViewerPane = React.memo(function MessageViewerPane({
     );
   }
 
+  const handleQuickReply = useCallback(
+    async (text: string) => {
+      if (!thread || !text.trim()) return;
+      const lastMsg = messages[messages.length - 1];
+      const recipient = lastMsg?.senderEmail || thread.participants[0]?.email || 'recipient@corp.com';
+      const recipientName = lastMsg?.senderName || thread.participants[0]?.name || recipient;
+
+      const newMsg: MailMessage = {
+        id: `msg-${Date.now()}`,
+        threadId: thread.id,
+        senderName: 'Me',
+        senderEmail: activeAccountEmail || 'me@corp.com',
+        recipientNames: [recipientName],
+        recipientEmails: [recipient],
+        subject: thread.subject.toLowerCase().startsWith('re:') ? thread.subject : `Re: ${thread.subject}`,
+        snippet: text.slice(0, 100),
+        bodyHtml: `<p>${text.replace(/\n/g, '<br/>')}</p>`,
+        date: 'Just now',
+        isRead: true,
+        isStarred: false,
+        hasAttachments: false,
+        folderId: 'sent',
+        labelIds: ['SENT', 'sent'],
+        category: 'focused',
+      };
+
+      setMessages((prev) => [...prev, newMsg]);
+
+      await window.desktopAPI?.mail.sendMail(
+        {
+          recipientEmails: [recipient],
+          recipientNames: [recipientName],
+          subject: newMsg.subject,
+          bodyHtml: newMsg.bodyHtml,
+          snippet: newMsg.snippet,
+        } as any,
+        activeAccountId
+      );
+    },
+    [thread, messages, activeAccountEmail, activeAccountId]
+  );
+
   return (
     <main className={styles.pane}>
       <div className={styles.topBar}>
@@ -136,41 +182,98 @@ export const MessageViewerPane = React.memo(function MessageViewerPane({
         </div>
 
         <div className={styles.actionsGroup}>
-          <button
-            className={styles.themeToggleBtn}
-            onClick={() => setCanvasTheme((prev) => (prev === 'white' ? 'dark' : 'white'))}
-            type="button"
-            title={`Switch to ${canvasTheme === 'white' ? 'dark' : 'white'} email canvas`}
-          >
-            {canvasTheme === 'white' ? <Moon size={15} /> : <Sun size={15} />}
-            <span>{canvasTheme === 'white' ? 'Dark Paper' : 'White Paper'}</span>
-          </button>
+          <div className={styles.viewModeControl} role="tablist" aria-label="Conversation view style">
+            <button
+              type="button"
+              role="tab"
+              aria-selected={viewMode === 'messenger'}
+              className={`${styles.viewModeBtn} ${viewMode === 'messenger' ? styles.active : ''}`}
+              onClick={() => setViewMode('messenger')}
+              title="Messenger Chat View: clean speech bubbles by sender"
+            >
+              <MessageSquare size={13} />
+              <span>Messenger</span>
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={viewMode === 'standard'}
+              className={`${styles.viewModeBtn} ${viewMode === 'standard' ? styles.active : ''}`}
+              onClick={() => setViewMode('standard')}
+              title="Standard Document View: full email layout"
+            >
+              <FileText size={13} />
+              <span>Document</span>
+            </button>
+          </div>
+
+          {viewMode === 'standard' ? (
+            <button
+              className={styles.themeToggleBtn}
+              onClick={() => setCanvasTheme((prev) => (prev === 'white' ? 'dark' : 'white'))}
+              type="button"
+              title={`Switch to ${canvasTheme === 'white' ? 'dark' : 'white'} email canvas`}
+            >
+              {canvasTheme === 'white' ? <Moon size={15} /> : <Sun size={15} />}
+              <span>{canvasTheme === 'white' ? 'Dark Paper' : 'White Paper'}</span>
+            </button>
+          ) : null}
         </div>
       </div>
 
-      <div className={styles.scrollArea}>
-        {messages.map((msg) => (
-          <article key={msg.id} className={styles.messageCard}>
-            <MessageHeader
-              message={msg}
-              isLocked={thread.isLocked}
-              onReply={onReply}
-              onDelete={() => onDeleteThread(thread.id)}
-              onToggleStar={() => onToggleStar(thread.id)}
-              onToggleLock={onToggleLock ? () => onToggleLock(thread.id) : undefined}
-            />
-            <MessageBody htmlContent={msg.bodyHtml} canvasTheme={canvasTheme} />
-            {msg.attachments && msg.attachments.length > 0 ? (
-              <AttachmentList
-                attachments={msg.attachments}
-                messageId={msg.id}
-                accountId={activeAccountId}
-                onPreviewAttachment={(att, all) => handleOpenMediaViewer(att, all, msg.id)}
-              />
-            ) : null}
-          </article>
-        ))}
-      </div>
+      {viewMode === 'messenger' ? (
+        <MessengerConversationView
+          messages={messages}
+          activeAccountEmail={activeAccountEmail}
+          onReply={onReply}
+          onQuickReply={handleQuickReply}
+          onPreviewAttachment={handleOpenMediaViewer}
+          accountId={activeAccountId}
+        />
+      ) : (
+        <>
+          <div className={styles.scrollArea}>
+            {messages.map((msg) => (
+              <article key={msg.id} className={styles.messageCard}>
+                <MessageHeader
+                  message={msg}
+                  isLocked={thread.isLocked}
+                  onReply={onReply}
+                  onDelete={() => onDeleteThread(thread.id)}
+                  onToggleStar={() => onToggleStar(thread.id)}
+                  onToggleLock={onToggleLock ? () => onToggleLock(thread.id) : undefined}
+                />
+                <MessageBody htmlContent={msg.bodyHtml} canvasTheme={canvasTheme} />
+                {msg.attachments && msg.attachments.length > 0 ? (
+                  <AttachmentList
+                    attachments={msg.attachments}
+                    messageId={msg.id}
+                    accountId={activeAccountId}
+                    onPreviewAttachment={(att, all) => handleOpenMediaViewer(att, all, msg.id)}
+                  />
+                ) : null}
+              </article>
+            ))}
+          </div>
+
+          <div className={styles.replyBar}>
+            <div
+              className={styles.replyInputTrigger}
+              onClick={onReply}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') onReply();
+              }}
+            >
+              <span>Click to reply to this thread...</span>
+            </div>
+            <Button variant="primary" icon={<Reply size={14} />} onClick={onReply}>
+              Reply
+            </Button>
+          </div>
+        </>
+      )}
 
       {viewerAttachment ? (
         <MediaViewerModal
@@ -182,23 +285,6 @@ export const MessageViewerPane = React.memo(function MessageViewerPane({
           onClose={handleCloseMediaViewer}
         />
       ) : null}
-
-      <div className={styles.replyBar}>
-        <div
-          className={styles.replyInputTrigger}
-          onClick={onReply}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') onReply();
-          }}
-        >
-          <span>Click to reply to this thread...</span>
-        </div>
-        <Button variant="primary" icon={<Reply size={14} />} onClick={onReply}>
-          Reply
-        </Button>
-      </div>
     </main>
   );
 });

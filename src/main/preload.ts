@@ -65,6 +65,10 @@ contextBridge.exposeInMainWorld('desktopAPI', {
       mimeType: string;
       accountId?: string;
     }) => ipcRenderer.invoke('mail:download-attachment', params),
+    simulateIncomingMail: (sample?: any, accountId?: string) =>
+      ipcRenderer.invoke('mail:simulate-incoming', { sample, accountId }),
+    showNotification: (params: { title: string; body: string; threadId?: string }) =>
+      ipcRenderer.invoke('mail:show-notification', params),
     onSyncProgress: (callback: (data: { current: number; total: number; status: string; isSyncing: boolean }) => void) => {
       const handler = (_: any, data: any) => callback(data);
       ipcRenderer.on('mail:sync-progress', handler);
@@ -74,6 +78,16 @@ contextBridge.exposeInMainWorld('desktopAPI', {
       const handler = (_: any, data: any) => callback(data);
       ipcRenderer.on('mail:threads-updated', handler);
       return () => ipcRenderer.removeListener('mail:threads-updated', handler);
+    },
+    onNewMessage: (callback: (data: { message: any; threadId: string }) => void) => {
+      const handler = (_: any, data: any) => callback(data);
+      ipcRenderer.on('mail:new-message-arrived', handler);
+      return () => ipcRenderer.removeListener('mail:new-message-arrived', handler);
+    },
+    onNavigateToThread: (callback: (data: { threadId: string }) => void) => {
+      const handler = (_: any, data: any) => callback(data);
+      ipcRenderer.on('mail:navigate-to-thread', handler);
+      return () => ipcRenderer.removeListener('mail:navigate-to-thread', handler);
     },
   },
   calendar: {

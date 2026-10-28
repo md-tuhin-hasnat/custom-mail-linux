@@ -15,6 +15,7 @@ interface UseMailboxDataProps {
   initialThreads: MailThread[];
   activeAccountId: string;
   onSelectedThreadReset?: () => void;
+  onNavigateToThread?: (threadId: string) => void;
 }
 
 export function useMailboxData({
@@ -22,12 +23,14 @@ export function useMailboxData({
   initialThreads,
   activeAccountId,
   onSelectedThreadReset,
+  onNavigateToThread,
 }: UseMailboxDataProps) {
   const [folders, setFolders] = useState<MailFolder[]>(initialFolders);
   const [threads, setThreads] = useState<MailThread[]>(initialThreads);
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStatus, setSyncStatus] = useState('All folders up to date');
   const [syncProgress, setSyncProgress] = useState<{ current: number; total: number } | undefined>();
+  const [incomingToast, setIncomingToast] = useState<{ message: MailMessage; threadId: string } | null>(null);
 
   // Concurrently load account folders and threads without waterfalls
   const loadAccountData = useCallback(async (accountId: string) => {
@@ -72,6 +75,22 @@ export function useMailboxData({
 
     return unsubscribe;
   }, []);
+
+  // Listen to real-time incoming messages & navigation events
+  useEffect(() => {
+    const unsubNew = window.desktopAPI?.mail?.onNewMessage?.(({ message, threadId }) => {
+      setIncomingToast({ message, threadId });
+    });
+
+    const unsubNav = window.desktopAPI?.mail?.onNavigateToThread?.(({ threadId }) => {
+      if (onNavigateToThread) onNavigateToThread(threadId);
+    });
+
+    return () => {
+      if (unsubNew) unsubNew();
+      if (unsubNav) unsubNav();
+    };
+  }, [onNavigateToThread]);
 
   const handleSync = useCallback(async () => {
     if (isSyncing || !window.desktopAPI?.mail?.sync) return;
@@ -129,6 +148,15 @@ export function useMailboxData({
     [activeAccountId, onSelectedThreadReset]
   );
 
+  const handleSimulateIncoming = useCallback(async () => {
+    if (!window.desktopAPI?.mail?.simulateIncomingMail) return;
+    try {
+      await window.desktopAPI.mail.simulateIncomingMail({}, activeAccountId);
+    } catch (e) {
+      console.warn('Simulation failed:', e);
+    }
+  }, [activeAccountId]);
+
   return {
     folders,
     threads,
@@ -137,6 +165,9 @@ export function useMailboxData({
     isSyncing,
     syncStatus,
     syncProgress,
+    incomingToast,
+    setIncomingToast,
+    handleSimulateIncoming,
     loadAccountData,
     handleSync,
     handleResyncAll,
