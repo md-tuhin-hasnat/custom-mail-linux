@@ -4,3 +4,8 @@ out/
 dist/
 *.log
 .DS_Store
+
+# Environment files
+.env
+.env*.local
+*.backup
